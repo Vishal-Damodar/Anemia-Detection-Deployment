@@ -37,7 +37,7 @@ const ForgotPassword = () => {
 
     // Send email to backend
     axios
-      .post("http://localhost:3006/auth/forgot", { email }, {
+      .post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/auth/forgot", { email }, {
         headers: {
           "Content-Type": "application/json",
         },

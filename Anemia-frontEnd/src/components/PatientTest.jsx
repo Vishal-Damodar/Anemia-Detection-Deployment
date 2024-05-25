@@ -75,7 +75,7 @@ const PatientTest = () => {
     console.log("data", value);
 
     axios
-      .post("http://localhost:3006/asha_login", formData, {
+      .post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/asha_login", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -10,7 +10,7 @@ const AshaDashboard = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:3006/asha_login/view_patients", value.user, {
+      .post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/asha_login/view_patients", value.user, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
@@ -26,35 +26,30 @@ const AshaDashboard = () => {
   }, []);
 
   const formatResults = (data) => {
-    const formattedResults = [];
-
+    const formattedResults = {};
+  
     data.forEach((patient) => {
       const { name, aadhar, city, testResults } = patient;
-
+  
       testResults.forEach((test) => {
-        let highestConfidenceResult = { confidence: -1 }; // Initialize with a low confidence value
-
         test.result.forEach((result) => {
-          if (result.confidence > highestConfidenceResult.confidence) {
-            highestConfidenceResult = result;
+          const currentResult = {
+            name,
+            aadhar,
+            city,
+            testDate: new Date(test.testDate),
+            className: result.class_name,
+            confidence: result.confidence,
+          };
+  
+          if (!(aadhar in formattedResults) || result.confidence > formattedResults[aadhar].confidence) {
+            formattedResults[aadhar] = currentResult;
           }
-        });
-
-        // Push only the result with the highest confidence
-        formattedResults.push({
-          name,
-          aadhar,
-          city,
-          testDate: new Date(test.testDate),
-          className: highestConfidenceResult.class_name,
-          confidence: highestConfidenceResult.confidence,
         });
       });
     });
-
-    formattedResults.sort((a, b) => b.testDate - a.testDate);
-
-    return formattedResults;
+  
+    return Object.values(formattedResults).sort((a, b) => b.testDate - a.testDate);
   };
 
   const handleSearch = (event) => {
