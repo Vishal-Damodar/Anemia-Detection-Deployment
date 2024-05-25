@@ -132,9 +132,9 @@ const PatientTest = () => {
   return (
     <React.Fragment>
 
-      <button className="relative mt-3 ml-3 rounded-lg bg-indigo-500 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-indigo-600 focus-visible:ring active:bg-indigo-700 md:text-base"
-
-  onClick={handleLogout}>Back</button>
+<button className="absolute mt-3 ml-3 rounded-lg bg-gray-700 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-gray-700 transition duration-100 hover:bg-gray-600 focus-visible:ring active:bg-gray-700 md:text-base"
+    onClick={handleLogout}
+>Back</button>
       <br />
       <div class="bg-transparent py-6 sm:py-8 lg:py-12">
         

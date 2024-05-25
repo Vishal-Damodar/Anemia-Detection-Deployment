@@ -77,9 +77,11 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="bg-white py-6 sm:py-8 lg:py-12">
-      <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
-        <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">
+    <div className="bg-grey-lighter min-h-screen flex flex-col">
+        
+        <div className="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
+        <div className="bg-white px-6 py-8 rounded-3xl shadow-xl shadow-gray-400 text-black w-full max-w-screen-lg mx-auto">
+          <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">
           Forgot Your Password?
         </h2>
         <Toaster toastOptions={{ duration: 4000 }} />
@@ -132,7 +134,7 @@ const ForgotPassword = () => {
           </p>
         </div>
       </div>
-    </div>
+    </div></div>
   );
 };
 

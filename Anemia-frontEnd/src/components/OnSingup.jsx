@@ -133,8 +133,12 @@ const App = () => {
   };
 
   return (
+    <div><button className="absolute mt-3 ml-3 rounded-lg bg-gray-700 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-gray-700 transition duration-100 hover:bg-gray-600 focus-visible:ring active:bg-gray-700 md:text-base"
+    onClick={handleLogout}
+>Back</button>
     <section className="bg-transparent flex items-center justify-center h-screen">
       <div>
+      
         <div className="bg-white px-6 py-8 rounded-3xl shadow-xl shadow-gray-400 text-black w-full max-w-screen-lg mx-auto">
           <Toaster toastOptions={{ duration: 4000 }} />
           <div id="recaptcha-container"></div>
@@ -207,7 +211,7 @@ const App = () => {
           )}
         </div>
       </div>
-    </section>
+    </section></div>
   );
 };
 
