@@ -5,111 +5,124 @@ import { Link } from "react-router-dom";
 
 const AshaDashboard = () => {
   const { value, setValue } = useMyContext();
-  console.log("value", value);
-  const [data, setData] = useState([]);
+  const [testResults, setTestResults] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
   useEffect(() => {
-    // axios.defaults.headers.common['Authorization'] = `Bearer ${value.token}`;
     axios
       .post("http://localhost:3006/asha_login/view_patients", value.user, {
-        withCredentials: true, // include credentials
+        withCredentials: true,
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
+          Accept: "application/json",
           "Access-Control-Allow-Origin": "http://localhost:5173",
         },
       })
       .then((res) => {
-        console.log(res.data);
-        setData(res.data);
+        const formattedResults = formatResults(res.data.testResults);
+        setTestResults(formattedResults);
       })
       .catch((err) => console.log(err));
   }, []);
 
-  const onsubmit = () => {};
+  const formatResults = (data) => {
+    const formattedResults = [];
+
+    data.forEach((patient) => {
+      const { name, aadhar, city, testResults } = patient;
+
+      testResults.forEach((test) => {
+        let highestConfidenceResult = { confidence: -1 }; // Initialize with a low confidence value
+
+        test.result.forEach((result) => {
+          if (result.confidence > highestConfidenceResult.confidence) {
+            highestConfidenceResult = result;
+          }
+        });
+
+        // Push only the result with the highest confidence
+        formattedResults.push({
+          name,
+          aadhar,
+          city,
+          testDate: new Date(test.testDate),
+          className: highestConfidenceResult.class_name,
+          confidence: highestConfidenceResult.confidence,
+        });
+      });
+    });
+
+    formattedResults.sort((a, b) => b.testDate - a.testDate);
+
+    return formattedResults;
+  };
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredResults = testResults.filter((result) =>
+    Object.values(result).some((field) =>
+      field.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
   return (
-    <React.Fragment>
-      <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
-      <div class="mb-5  md:mb-10 ">
-        <h2 class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">
-          History of Test results
+    <div className="mx-auto max-w-screen-lg px-4 py-8 bg-gray-100 dark:bg-gray-900">
+      <div className="mb-8">
+        <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 dark:text-gray-200 lg:text-3xl">
+          History of Test Results
         </h2>
-        <Link to={'/patient'}  class="  mr-5 my-3 rounded-lg bg-indigo-500 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-indigo-600 focus-visible:ring active:bg-indigo-700 md:text-base">
-      back home
-      </Link>
+        <div className="flex justify-center mb-4">
+          <input
+            type="text"
+            placeholder="Search Patient"
+            className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
+        <Link
+          to={"/patient"}
+          className="inline-block px-6 py-2 text-center text-sm font-semibold text-white bg-indigo-500 rounded-lg hover:bg-indigo-600 focus-visible:ring ring-indigo-300 active:bg-indigo-700 md:text-base"
+        >
+          Back Home
+        </Link>
       </div>
-      <div class=" w-full h-auto relative flex justify-center items-center overflow-x-auto rounded-lg">
-        <table class="text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-800 dark:text-gray-400">
             <tr className="rounded-lg">
-              <th scope="col" class="px-6 py-3 rounded-tl-lg">
-                Patient name
-              </th>
-              <th scope="col" class="px-6 text-center py-4">
-                Addhar
-              </th>
-              <th scope="col" class="px-6 text-center py-4">
-                City
-              </th>
-              <th scope="col" class="px-6 text-center py-4">
-                Test Date
-              </th>
-              <th scope="col" class="px-6 py-4 text-center rounded-tr-lg">
-                Result
-              </th>
+              <th className="px-6 py-3 rounded-tl-lg">Patient Name</th>
+              <th className="px-6 py-3">Aadhar</th>
+              <th className="px-6 py-3">City</th>
+              <th className="px-6 py-3">Test Date</th>
+              <th className="px-6 py-3 rounded-tr-lg">Results</th>
             </tr>
           </thead>
           <tbody>
-            {data.testResults &&
-              data.testResults.map((person, index) => (
-                <React.Fragment key={index}>
-                  {person.testResults.map((test, i) => (
-                    <tr
-                      key={i}
-                      class={`${
-                        index % 2 === 0
-                          ? " dark:bg-gray-900"
-                          : " dark:bg-gray-800"
-                      } border-b rounded-b-lg dark:border-gray-700 ${
-                        index === person.testResults.length - 1
-                          ? "rounded-b-lg"
-                          : ""
-                      }`}
-                    >
-                      {i === 0 && (
-                        <React.Fragment>
-                          <td
-                            class=" px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                            rowSpan={person.testResults.length}
-                          >
-                            {person.name}
-                          </td>
-                          <td
-                            class="px-6 py-4"
-                            rowSpan={person.testResults.length}
-                          >
-                            {person.aadhar}
-                          </td>
-                          <td
-                            class="px-6 py-4"
-                            rowSpan={person.testResults.length}
-                          >
-                            {person.city}
-                          </td>
-                        </React.Fragment>
-                      )}
-                      <td class="px-6 py-4">
-                        {new Date(test.testDate).toLocaleString()}
-                      </td>
-                      <td class="px-6 py-4">{test.result}</td>
-                    </tr>
-                  ))}
-                </React.Fragment>
-              ))}
+            {filteredResults.map((result, index) => (
+              <tr
+                key={index}
+                className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"} border-b dark:border-gray-700`}
+              >
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                  {result.name}
+                </td>
+                <td className="px-6 py-4">{result.aadhar}</td>
+                <td className="px-6 py-4">{result.city}</td>
+                <td className="px-6 py-4">
+                  {result.testDate.toLocaleString()}
+                </td>
+                <td className="px-6 py-4">
+                  {result.className} {result.confidence}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
-      </div>
-    </React.Fragment>
+    </div>
   );
 };
 

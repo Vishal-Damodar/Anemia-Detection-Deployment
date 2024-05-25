@@ -120,7 +120,7 @@ const Login = () => {
       <div className="bg-grey-lighter min-h-screen flex flex-col">
         
         <div className="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
-        <div className="bg-white px-6 py-8 rounded-3xl shadow-md text-black w-full max-w-screen-lg mx-auto">
+        <div className="bg-white px-6 py-8 rounded-3xl shadow-xl shadow-gray-400 text-black w-full max-w-screen-lg mx-auto">
           <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">
             Login
           </h2>
