@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    role: frontend
+    env: demo
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      role: frontend
+  template:
+    metadata:
+      labels:
+        role: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: syedsameershah/anemia-frontend-v1:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5173
+        livenessProbe:
+          httpGet:
+            path: /ok
+            port: 5173
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+             path: /ok
+             port: 5173
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1

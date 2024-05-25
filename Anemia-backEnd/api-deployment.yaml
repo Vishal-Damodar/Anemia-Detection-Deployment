@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    role: api
+    env: demo
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      role: api
+  template:
+    metadata:
+      labels:
+        role: api
+    spec:
+      containers:
+      - name: api
+        image: syedsameershah/anemia-backend:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3006
+        livenessProbe:
+          httpGet:
+            path: /ok
+            port: 3006
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+             path: /ok
+             port: 3006
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1

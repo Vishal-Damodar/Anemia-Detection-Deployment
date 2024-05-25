@@ -1,0 +1,23 @@
+<div class="row mt-5">
+    <div class="col-md-6 m-auto">
+        <div class="card card-body text-center">
+            <h1 class="mb-3">
+                <img src="/assets/secure-icon.png" alt="icon" width="20%" />
+            </h1>
+            <h2>
+                Login
+            </h2>
+            <%- include ("./messages") %>
+            <form action="/auth/user_login" method="POST">
+                <div class="form-group">
+                    <label for="aadar">Email</label>
+                    <input type="aadar" id="aadar" name="aadhar" class="form-control" placeholder="Enter AADHAR Number" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            <p>
+                Forgot Password? <a href="/auth/forgot">Reset</a>
+            </p>
+        </div>
+    </div>
+</div>
