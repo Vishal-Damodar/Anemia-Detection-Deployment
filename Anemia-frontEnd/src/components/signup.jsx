@@ -14,6 +14,7 @@ function Signup() {
   const aadharRef = useRef(null);
   const password2Ref = useRef(null);
   const ashaRef = useRef(null);
+  const nameRef = useRef(null);
 
   const { logout } = useMyContext();
 
@@ -21,7 +22,7 @@ function Signup() {
     // Call the logout function when the logout button is clicked
     logout();
   };
-  
+
   const [params, setParams] = useState({
     name: { value: "", valid: false, error: "" },
     aadhar: { value: "", valid: false, error: "" },
@@ -32,6 +33,7 @@ function Signup() {
     password2: { value: "", valid: false, error: "" },
   });
 
+  const [nameTouched, setNameTouched] = useState(false);
   const [aadharTouched, setAadharTouched] = useState(false);
   const [phoneTouched, setPhoneTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
@@ -44,12 +46,12 @@ function Signup() {
 
   useEffect(() => {
     // Focus on the email input field when the component mounts
-    emailRef.current.focus();
+    nameRef.current.focus();
   }, []);
 
   const onsubmit = () => {
     const isValid = Object.values(params).every((field) => field.valid);
-
+    console.log("on submit");
     if (!isValid) {
       const updatedParams = {};
       Object.keys(params).forEach((key) => {
@@ -68,8 +70,6 @@ function Signup() {
       } else if (params.password.value.length < 8) {
         return toast.error("Passwords must be at least 8 characters");
       }
-
-      return;
     }
 
     const formData = {
@@ -81,9 +81,15 @@ function Signup() {
       password: params.password.value,
       password2: params.password2.value,
     };
-
+    console.log(formData);
     axios
-      .post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/auth/register", formData)
+      .post("http://localhost:3006/auth/register", formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:5173",
+        },
+      })
       .then((res) => {
         if (res.data.register?.errors.length > 0)
           toast.error(res.data.register?.errors[0]?.msg);
@@ -133,8 +139,16 @@ function Signup() {
 
 
   const handleKeyDown = (e) => {
+
     if (e.key === "Enter") {
-      if (e.target.name === "email") {
+      console.log(params.name.value.length);
+      if (e.target.name === "name") {
+        if (params.name.value.length > 1) {
+          emailRef.current.focus();
+        } else {
+          setNameTouched(true);
+        }
+      } else if (e.target.name === "email") {
         if (validateEmail(params.email.value)) {
           phoneRef.current.focus();
         } else {
@@ -146,34 +160,34 @@ function Signup() {
         } else {
           setPhoneTouched(true);
         }
-      }else if (e.target.name === "aadhar") {
+      } else if (e.target.name === "aadhar") {
         if (validateAadharNumber(params.aadhar.value)) {
           passwordRef.current.focus();
         } else {
           setAadharTouched(true);
         }
-      }else if (e.target.name === "password") {
+      } else if (e.target.name === "password") {
         if (
           validateEmail(params.email.value) &&
           params.password.value.length >= 8
-        ) 
-        {
+        ) {
           password2Ref.current.focus();
-        }  else {
+        } else {
           setPasswordTouched(true);
-        }}else if (e.target.name === "password2") {
-          if (
-            validateEmail(params.email.value) &&
-            params.password2.value.length >= 8
-          ) {
-            ashaRef.current.focus();
-          }else{
+        }
+      } else if (e.target.name === "password2") {
+        if (
+          validateEmail(params.email.value) &&
+          params.password2.value.length >= 8
+        ) {
+          ashaRef.current.focus();
+        } else {
           setPassword2Touched(true);
         }
       }
     }
   };
-  
+
 
 
   const validateAadharNumber = (aadhar) => {
@@ -203,15 +217,47 @@ function Signup() {
 
   return (
     <div>
-            <button className="absolute mt-3 ml-3 rounded-lg bg-gray-700 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-gray-700 transition duration-100 hover:bg-gray-600 focus-visible:ring active:bg-gray-700 md:text-base"
-    onClick={handleLogout}
->Back</button>
+      <button className="absolute mt-3 ml-3 rounded-lg bg-gray-700 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-gray-700 transition duration-100 hover:bg-gray-600 focus-visible:ring active:bg-gray-700 md:text-base"
+        onClick={handleLogout}
+      >Back</button>
       <Toaster toastOptions={{ duration: 4000 }} />
       <div className="bg-grey-lighter min-h-screen flex flex-col">
-        
+
         <div className="container mt-3 max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
-        <div className="bg-white px-6 py-4 rounded-3xl shadow-xl shadow-gray-400 text-black w-full max-w-screen-lg mx-auto">            
+          <div className="bg-white px-6 py-4 rounded-3xl shadow-xl shadow-gray-400 text-black w-full max-w-screen-lg mx-auto">
             <h1 className="mb-3 text-3xl text-center">Sign up</h1>
+
+
+
+            <div>
+              <label
+                htmlFor="name"
+                className="mb-2 inline-block text-sm text-gray-800 sm:text-base"
+              >
+                Name
+              </label>
+              <input
+                ref={nameRef} // Set the ref to the email input
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                onBlur={() => setNameTouched(true)}
+                onKeyDown={handleKeyDown}
+                name="name"
+                className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${params.name.value.length < 1 && nameTouched
+                    ? "border-red-500"
+                    : "border-gray-300"
+                  }`}
+              />
+              {params.name.value.length < 1 && nameTouched && (
+                <p className="text-red-500 text-xs mt-1">
+                  Please enter a name 
+                </p>
+              )}
+            </div>
+
+
+
+
+
             <div>
               <label
                 htmlFor="email"
@@ -225,11 +271,10 @@ function Signup() {
                 onBlur={() => setEmailTouched(true)}
                 onKeyDown={handleKeyDown}
                 name="email"
-                className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${
-                  !validateEmail(params.email.value) && emailTouched
+                className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${!validateEmail(params.email.value) && emailTouched
                     ? "border-red-500"
                     : "border-gray-300"
-                }`}
+                  }`}
               />
               {!validateEmail(params.email.value) && emailTouched && (
                 <p className="text-red-500 text-xs mt-1">
@@ -250,16 +295,15 @@ function Signup() {
               </label>
               <input
                 ref={phoneRef} // Set the ref to the email input
-                type = "number"
+                type="number"
                 onChange={(e) => handleInputChange("phone", e.target.value)}
                 onBlur={() => setPhoneTouched(true)}
                 onKeyDown={handleKeyDown}
                 name="phone"
-                className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${
-                  !validatePhoneNumber(params.phone.value) && phoneTouched
+                className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${!validatePhoneNumber(params.phone.value) && phoneTouched
                     ? "border-red-500"
                     : "border-gray-300"
-                }`}
+                  }`}
               />
               {!validatePhoneNumber(params.phone.value) && phoneTouched && (
                 <p className="text-red-500 text-xs mt-1">
@@ -284,7 +328,7 @@ function Signup() {
             )} */}
 
 
-<div>
+            <div>
               <label
                 htmlFor="aadhar"
                 className="mb-2 inline-block text-sm text-gray-800 sm:text-base"
@@ -293,16 +337,15 @@ function Signup() {
               </label>
               <input
                 ref={aadharRef} // Set the ref to the email input
-                type = "number"
+                type="number"
                 onChange={(e) => handleInputChange("aadhar", e.target.value)}
                 onBlur={() => setAadharTouched(true)}
                 onKeyDown={handleKeyDown}
                 name="aadhar"
-                className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${
-                  !validateAadharNumber(params.aadhar.value) && aadharTouched
+                className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${!validateAadharNumber(params.aadhar.value) && aadharTouched
                     ? "border-red-500"
                     : "border-gray-300"
-                }`}
+                  }`}
               />
               {!validateAadharNumber(params.aadhar.value) && aadharTouched && (
                 <p className="text-red-500 text-xs mt-1">
@@ -336,11 +379,10 @@ function Signup() {
                   onKeyDown={handleKeyDown}
                   name="password"
                   type={showPassword ? "text" : "password"} // Show plain text if showPassword is true
-                  className={`flex-grow outline-none appearance-none bg-transparent ${
-                    params.password.value.length < 8 && passwordTouched
+                  className={`flex-grow outline-none appearance-none bg-transparent ${params.password.value.length < 8 && passwordTouched
                       ? "border-red-500"
                       : "border-transparent"
-                  }`}
+                    }`}
                 />
                 {/* Show/hide password toggle button */}
                 <button
@@ -378,16 +420,15 @@ function Signup() {
               </label>
               <div className="flex items-center border rounded bg-gray-50 px-3 py-2 text-gray-800 ring-indigo-300 transition duration-100 focus-within:ring">
                 <input
-                ref={password2Ref}
-                onBlur={() => setPassword2Touched(true)}
+                  ref={password2Ref}
+                  onBlur={() => setPassword2Touched(true)}
                   onChange={(e) => handleInputChange("password2", e.target.value)}
                   type={showPassword ? "text" : "password"} // Show plain text if showPassword is true
-                  className={`flex-grow outline-none appearance-none bg-transparent ${
-                    params.password2.value !== params.password.value &&
-                    passwordTouched && password2Touched
+                  className={`flex-grow outline-none appearance-none bg-transparent ${params.password2.value !== params.password.value &&
+                      passwordTouched && password2Touched
                       ? "border-red-500"
                       : "border-transparent"
-                  }`}
+                    }`}
                 />
                 {/* Show/hide password toggle button */}
                 <button
@@ -411,7 +452,7 @@ function Signup() {
                 </button>
               </div>
               {params.password2.value !== params.password.value &&
-                passwordTouched  && password2Touched && (
+                passwordTouched && password2Touched && (
                   <p className="text-red-500 text-xs mt-1">
                     Passwords do not match
                   </p>
@@ -488,7 +529,7 @@ function Signup() {
             </div>
           </div>
 
-          
+
         </div>
       </div>
     </div>

@@ -15,8 +15,8 @@ import { useMyContext } from "../MyContext";
 const App = () => {
   const { value, setValue } = useMyContext();
 
-  const [otp, setOtp] = useState("123456");
-  const [aadhar, setAadhar] = useState("285950905601");
+  const [otp, setOtp] = useState("");
+  const [aadhar, setAadhar] = useState("");
   const [ph, setPh] = useState("");
   const [loading, setLoading] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
@@ -50,7 +50,7 @@ const App = () => {
   const fetchPhoneNumber = async (aadharNumber) => {
     try {
       console.log("client");
-      const response = await axios.post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/get-phone-number", { aadhar: aadharNumber });
+      const response = await axios.post("http://localhost:3006/get-phone-number", { aadhar: aadharNumber });
       const { phoneNumber } = response.data;
       console.log('Phone number fetched:', phoneNumber);
       return phoneNumber;

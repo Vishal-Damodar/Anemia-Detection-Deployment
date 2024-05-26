@@ -37,7 +37,7 @@ const Login = () => {
   const onsubmit = () => {
     console.log("on submit sign in");
     axios
-      .post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/auth/login", formData, {
+      .post("http://localhost:3006/auth/login", formData, {
         withCredentials: true, // include credentials
         headers: {
           "Content-Type": "application/json",
@@ -51,10 +51,15 @@ const Login = () => {
         else {
           setValue({
             ...value,
-            user: res.data.asha_login.user,
-            token: res.data.asha_login.token,
+            user: res.data.user,
+            token: res.data.token,
           });
-          navigate("/patient");
+          console.log(res.data.successRedirect);
+
+          if(res.data.successRedirect == "/asha_login")
+            navigate("/patient");
+          else
+            navigate("/Dash")
         }
       })
       .catch((err) => console.log(err));

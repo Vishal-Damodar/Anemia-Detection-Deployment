@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useMyContext } from "../MyContext";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+
 
 const AshaDashboard = () => {
   const { value, setValue } = useMyContext();
   const [testResults, setTestResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -15,7 +18,7 @@ const AshaDashboard = () => {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:5173",
+          "Access-Control-Allow-Origin": "http://a9b1f116386444cbabbd084800b9a8ba-1625930597.ap-south-1.elb.amazonaws.com:5173/",
         },
       })
       .then((res) => {
@@ -37,7 +40,7 @@ const AshaDashboard = () => {
             name,
             aadhar,
             city,
-            testDate: new Date(test.testDate),
+            testDate: new Date(test.testDate),  
             className: result.class_name,
             confidence: result.confidence,
           };
@@ -61,6 +64,14 @@ const AshaDashboard = () => {
       field.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+ const handleDetailedInfo = (aadhar) => {
+  setValue({
+    ...value,
+    aadhar: aadhar
+  });
+    navigate(`/testresult`);
+  };
 
   return (
     <div className="mx-auto max-w-screen-lg px-4 py-8 bg-gray-100 dark:bg-gray-900">
@@ -93,6 +104,7 @@ const AshaDashboard = () => {
               <th className="px-6 py-3">City</th>
               <th className="px-6 py-3">Test Date</th>
               <th className="px-6 py-3 rounded-tr-lg">Results</th>
+              <th className="px-6 py-3">Details</th> {/* New column for the details button */}
             </tr>
           </thead>
           <tbody>
@@ -112,6 +124,14 @@ const AshaDashboard = () => {
                 <td className="px-6 py-4">
                   {result.className} {result.confidence}
                 </td>
+                <td className="px-6 py-4">
+                  <button
+                    className="px-4 py-2 text-white bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring ring-indigo-300"
+                    onClick={() => handleDetailedInfo(result.aadhar)}
+                  >
+                    Details
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -122,3 +142,4 @@ const AshaDashboard = () => {
 };
 
 export default AshaDashboard;
+

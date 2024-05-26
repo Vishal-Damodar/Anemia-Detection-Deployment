@@ -6,6 +6,7 @@ const OAuth2 = google.auth.OAuth2;
 const jwt = require("jsonwebtoken");
 const JWT_KEY = "jwtactivekey987";
 const JWT_RESET_KEY = "jwtresetkey987";
+const { getPatients } = require("../controllers/doctorController");
 
 //------------ User Model ------------//
 const User = require("../models/User");
@@ -15,7 +16,7 @@ const Patient = require("../models/Patient");
 exports.registerHandle = (req, res) => {
     const { name, email, password, password2, role } = req.body;
     let errors = [];
-
+    console.log("entered register handle")
     //------------ Checking required fields ------------//
     if (!name || !email || !password || !password2 || !role) {
         errors.push({ msg: "Please enter all fields" });
@@ -67,7 +68,7 @@ exports.registerHandle = (req, res) => {
 
                 oauth2Client.setCredentials({
                     refresh_token:
-                        "1//04DrNou6ZzSarCgYIARAAGAQSNwF-L9IrRndXidqk27amPLIdacMO9KpGn-fSDsSFuqi_RlroDiFI0PkotydtZfp4eZ4O7PM2SMM",
+                        "1//043Xli7C6Ouf2CgYIARAAGAQSNwF-L9IrEfVSA5Gw4wsGXmXFX8BIPXuMfMGTQwqAmWicpBcGflmq78Om9OKCDWUuzxEs1bOkVHs",
                 });
                 const accessToken = oauth2Client.getAccessToken();
 
@@ -99,7 +100,7 @@ exports.registerHandle = (req, res) => {
                             "730525504291-364glkh8qkqtl67l8sfeoaipfvu95qop.apps.googleusercontent.com",
                         clientSecret: "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",
                         refreshToken:
-                            "1//04DrNou6ZzSarCgYIARAAGAQSNwF-L9IrRndXidqk27amPLIdacMO9KpGn-fSDsSFuqi_RlroDiFI0PkotydtZfp4eZ4O7PM2SMM",
+                            "1//043Xli7C6Ouf2CgYIARAAGAQSNwF-L9IrEfVSA5Gw4wsGXmXFX8BIPXuMfMGTQwqAmWicpBcGflmq78Om9OKCDWUuzxEs1bOkVHs",
                         accessToken: accessToken,
                     },
                 });
@@ -231,7 +232,7 @@ exports.forgotPassword = (req, res) => {
 
                 oauth2Client.setCredentials({
                     refresh_token:
-                        "1//04DrNou6ZzSarCgYIARAAGAQSNwF-L9IrRndXidqk27amPLIdacMO9KpGn-fSDsSFuqi_RlroDiFI0PkotydtZfp4eZ4O7PM2SMM",
+                        "1//043Xli7C6Ouf2CgYIARAAGAQSNwF-L9IrEfVSA5Gw4wsGXmXFX8BIPXuMfMGTQwqAmWicpBcGflmq78Om9OKCDWUuzxEs1bOkVHs",
                 });
                 const accessToken = oauth2Client.getAccessToken();
 
@@ -267,7 +268,7 @@ exports.forgotPassword = (req, res) => {
                                 clientSecret:
                                     "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",
                                 refreshToken:
-                                    "1//04DrNou6ZzSarCgYIARAAGAQSNwF-L9IrRndXidqk27amPLIdacMO9KpGn-fSDsSFuqi_RlroDiFI0PkotydtZfp4eZ4O7PM2SMM",
+                                    "1//043Xli7C6Ouf2CgYIARAAGAQSNwF-L9IrEfVSA5Gw4wsGXmXFX8BIPXuMfMGTQwqAmWicpBcGflmq78Om9OKCDWUuzxEs1bOkVHs",
                                 accessToken: accessToken,
                             },
                         });
@@ -388,42 +389,54 @@ exports.resetPassword = (req, res) => {
 exports.loginHandle = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then((user) => {
-            let successRedirect;
             if (user) {
-                // Determine the success redirect based on the user's role
-                switch (user.role) {
-                    case "Asha":
-                        successRedirect = "/asha_login";
-                        console.log("asha");
-                        break;
-                    case "Doctor":
-                        successRedirect = "/doctor_login";
-                        break;
-                    default:
-                        res.json({ error_msg: "Access restricted!" });
-                        successRedirect = "/auth/register";
-                }
-                passport.authenticate("local", {
-                    successRedirect: successRedirect,
-                    failureRedirect: "/auth/register",
-                    failureFlash: true,
-                })(req, res, next);
+                passport.authenticate("local", (err, user, info) => {
+                    if (err) {
+                        return next(err);
+                    }
+                    if (!user) {
+                        return res.json({ error_msg: "User not found. Please register." });
+                    }
 
-                // Now you can proceed with your logic based on the user's role
+                    req.logIn(user, async (err) => {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        const token = jwt.sign(
+                            { user },
+                            JWT_KEY,
+                            { expiresIn: "30m" },
+                        );
+
+                        switch (user.role) {
+                            case "Asha":
+                                res.json({ user, token, successRedirect: "/asha_login" });
+                                console.log("asha");
+                                break;
+                            case "Doctor":
+                                try {
+                                    const viewPatients = await getPatients(req.query.filter);
+                                    res.json({ user, viewPatients, token, successRedirect: "/doctor_login" });
+                                } catch (error) {
+                                    console.error("Error getting patients:", error);
+                                    res.json({ error_msg: "Error getting patients" });
+                                }
+                                break;
+                            default:
+                                res.json({ error_msg: "Access restricted!" });
+                        }
+                    });
+                })(req, res, next);
             } else {
                 res.json({ error_msg: "User not found. Please register." });
-                // res.redirect("/auth/register");
                 console.log("User not found");
             }
         })
         .catch((error) => {
-            // Error handling if findOne operation fails
             console.error("Error finding user:", error);
             res.json({ error_msg: "Error finding user. Please try again." });
-            // res.redirect("/auth/login");
         });
-
-    // Use the determined successRedirect value in passport.authenticate()
 };
 
 exports.loginUserHandle = (req, res, next) => {

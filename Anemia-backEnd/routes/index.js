@@ -35,15 +35,15 @@ router.get("/user_result", userController.getUserResult);
 
 router.get('/asha_login', ensureAuthenticated, async (req, res) => {
   try {
-      const loggedInUser = req.user; // Access the logged-in user's information from req.user
-      const token = jwt.sign(
-        { loggedInUser },
-        JWT_KEY,
-        { expiresIn: "30m" },
-    );
-      console.log("logi ",token);
-      const registrationStatistics = await getRegistrationStatistics(loggedInUser.email); // Fetch registration statistics
-      res.json({asha_login: { user: loggedInUser, registrationStatistics ,token}}); // Render asha_login page with user info and statistics
+    //  const loggedInUser = req.user; // Access the logged-in user's information from req.user
+    //  const token = jwt.sign(
+    //    { loggedInUser },
+    //    JWT_KEY,
+    //    { expiresIn: "30m" },
+    //);
+      //console.log("logi ",token);
+      //const registrationStatistics = await getRegistrationStatistics(loggedInUser.email); // Fetch registration statistics
+      //res.json({ user: loggedInUser, registrationStatistics ,token}); // Render asha_login page with user info and statistics
   } catch (error) {
       console.error('Error rendering asha_login:', error);
       res.status(500).send('Internal Server Error');
@@ -53,7 +53,7 @@ router.get('/asha_login', ensureAuthenticated, async (req, res) => {
 router.post(
   "/asha_login/view_patients",
   ensureAuthenticated,
-  async (req, res) => {
+  async (req, res) => { 
     try {
       const loggedInUser = req.user;
       // Call the fetchTestResultsByTester function to fetch data
@@ -98,15 +98,27 @@ router.post(
   ashaController.registerHandle
 );
 
+router.post(
+  "/take_test",
+  upload.fields([
+    { name: "nailImageData", maxCount: 1 },
+  ]),
+  userController.register
+);
+
 router.get("/doctor_login", ensureAuthenticated, async (req, res) => {
   try {
-      const loggedInUser = req.user;
-      filter = req.query.filter;
-      const viewPatients = await getPatients(filter);
-
-      // Send the fetched data to the frontend as JSON
-      res.json(viewPatients);
-      console.log(viewPatients);
+    //   const loggedInUser = req.user;
+    //   const token = jwt.sign(
+    //     { loggedInUser },
+    //     JWT_KEY,
+    //     { expiresIn: "30m" },
+    // );
+      console.log("entered");
+       filter = req.query.filter;
+       const viewPatients = await getPatients(filter);
+       res.json(viewPatients ); // Render asha_login page with user info and statistics
+    //   console.log(viewPatients);
   } catch (error) {
       console.error("Error rendering asha_login:", error);
       res.status(500).send("Internal Server Error");
@@ -158,7 +170,7 @@ router.get("/test_result", async (req, res) => {
   }
 });
 
-router.get("/successReset", (req, res) => res.render("successReset"));
+router.get("/successReset", (req, res) => res.send("successReset"));
 
 
 module.exports = router;

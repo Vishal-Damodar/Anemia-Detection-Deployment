@@ -63,7 +63,7 @@ async function registerHandle(req, res) {
 
     const resultImages = {
       url: nailImageData.path,
-      bodyPart: "Nail",
+      bodyPart: "Tongue",
       ResultImage: result.image,
     };
 
