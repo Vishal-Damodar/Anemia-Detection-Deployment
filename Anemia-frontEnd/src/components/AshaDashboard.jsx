@@ -13,12 +13,12 @@ const AshaDashboard = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:3006/asha_login/view_patients", value.user, {
+      .post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/asha_login/view_patients", value.user, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:5173/",
+          "Access-Control-Allow-Origin": "http://a9b1f116386444cbabbd084800b9a8ba-1625930597.ap-south-1.elb.amazonaws.com:5173/",
         },
       })
       .then((res) => {

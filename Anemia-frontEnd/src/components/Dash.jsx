@@ -29,9 +29,9 @@ function Dash() {
     let url;
     setLoading(true); 
     if (active === 'patient') {
-      url = "http://localhost:3006/doctor_login?filter=unresponded";
+      url = "http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/doctor_login?filter=unresponded";
     } else if (active === 'response') {
-      url = "http://localhost:3006/doctor_login?filter=responded";
+      url = "http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/doctor_login?filter=responded";
     }
 
     axios
@@ -40,7 +40,7 @@ function Dash() {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:5173",
+          "Access-Control-Allow-Origin": "http://a9b1f116386444cbabbd084800b9a8ba-1625930597.ap-south-1.elb.amazonaws.com:5173/",
         },
       })
       .then((res) => {
@@ -78,7 +78,7 @@ function Dash() {
     const response = responses[testResultId];
     if (response) {
       axios
-        .post(`http://localhost:3006/update_response`, {
+        .post(`http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/update_response`, {
           patientId,
           testResultId,
           response,
@@ -115,7 +115,7 @@ function Dash() {
         className="absolute top-3 right-6 rounded-lg bg-gray-700 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-gray-700 transition duration-100 hover:bg-gray-600 focus-visible:ring active:bg-gray-700 md:text-base" 
         onClick={handleLogout}
       >
-        Log Out
+        Logout
       </button>
 
       <section className="text-gray-600 body-font overflow-hidden">

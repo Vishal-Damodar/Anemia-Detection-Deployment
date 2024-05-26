@@ -12,12 +12,12 @@ function SuccessReset() {
 
     useEffect(() => {
         axios
-            .get("http://localhost:3006/auth/activate/${token}", {
+            .get("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/auth/activate/${token}", {
                 withCredentials: true,
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:5173",
+                    "Access-Control-Allow-Origin": "http://a9b1f116386444cbabbd084800b9a8ba-1625930597.ap-south-1.elb.amazonaws.com:5173/",
                 },
             })
             .then((response) => {

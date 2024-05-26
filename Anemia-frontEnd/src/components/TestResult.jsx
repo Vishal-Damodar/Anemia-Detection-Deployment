@@ -12,14 +12,14 @@ const TestResult = () => {
 
   const { logout } = useMyContext();
   const handleLogout = () => {
-    logout();
+    window.history.back();
   };
 
   useEffect(() => {
     const aadhar = value.aadhar;
     console.log("global", value);
     axios
-      .get(`http://localhost:3006/user_result?aadhar=${aadhar}`)
+      .get(`http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/user_result?aadhar=${aadhar}`)
       .then((res) => {
         setData(res.data.user_result.patient);
         setPatient(res.data.user_result.patient);
@@ -55,7 +55,7 @@ const TestResult = () => {
           <div className="bg-white rounded-lg shadow-lg">
             <div className="bg-blue-500 text-white rounded-t-lg px-4 py-3 relative">
               <button className="absolute top-2 left-2 rounded-lg bg-indigo-800 px-6 py-2 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-indigo-600 focus-visible:ring active:bg-indigo-700 md:text-base" onClick={handleLogout}>
-                Logout
+                Back
               </button>
               <h2 className="text-2xl font-semibold text-center sm:text-3xl">Patient Information</h2>
             </div>

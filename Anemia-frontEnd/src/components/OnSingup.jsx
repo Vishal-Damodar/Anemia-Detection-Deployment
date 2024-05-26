@@ -50,7 +50,7 @@ const App = () => {
   const fetchPhoneNumber = async (aadharNumber) => {
     try {
       console.log("client");
-      const response = await axios.post("http://localhost:3006/get-phone-number", { aadhar: aadharNumber });
+      const response = await axios.post("http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/get-phone-number", { aadhar: aadharNumber });
       const { phoneNumber } = response.data;
       console.log('Phone number fetched:', phoneNumber);
       return phoneNumber;
