@@ -48,7 +48,7 @@ const Login = () => {
       .then((res) => {
         console.log(res);
         if (res.data === "register") toast.error("Login failed");
-        else {
+          else {
           setValue({
             ...value,
             user: res.data.user,
@@ -58,8 +58,10 @@ const Login = () => {
 
           if(res.data.successRedirect == "/asha_login")
             navigate("/patient");
-          else
+          else if(res.data.successRedirect == "/doctor_login")
             navigate("/Dash")
+          else
+          toast.error("Account not registered or wrong Passsword");
         }
       })
       .catch((err) => console.log(err));

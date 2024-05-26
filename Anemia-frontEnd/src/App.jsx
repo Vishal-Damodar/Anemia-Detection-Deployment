@@ -13,7 +13,8 @@ import PatientTest from "./components/PatientTest";
 import AshaDashboard from "./components/AshaDashboard";
 import TestResult from "./components/TestResult";
 import SelfTest from "./components/SelfTest";
- import ForgotPassword from "./components/ForgotPassword";
+import ForgotPassword from "./components/ForgotPassword";
+import SuccessRedirect from "./components/SuccessRedirect";
 function App() {
   const [count, setCount] = useState(0);
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="testresult" element={<TestResult/>}/>
           <Route path="selfTest" element={<SelfTest/>}/>
           <Route path="forgot" element={<ForgotPassword/>}/>
+          <Route path="/auth/activate/:token" element={<SuccessRedirect/>} />
         </Routes>
         </MyProvider>
       </BrowserRouter>

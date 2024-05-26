@@ -93,7 +93,13 @@ function Signup() {
       .then((res) => {
         if (res.data.register?.errors.length > 0)
           toast.error(res.data.register?.errors[0]?.msg);
-        else toast.success(res.data.success_msg);
+        else {
+          toast.success(res.data.success_msg);
+          setTimeout(() => {
+            navigate("/login");
+          }, 4000);
+          ;
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -243,13 +249,13 @@ function Signup() {
                 onKeyDown={handleKeyDown}
                 name="name"
                 className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${params.name.value.length < 1 && nameTouched
-                    ? "border-red-500"
-                    : "border-gray-300"
+                  ? "border-red-500"
+                  : "border-gray-300"
                   }`}
               />
               {params.name.value.length < 1 && nameTouched && (
                 <p className="text-red-500 text-xs mt-1">
-                  Please enter a name 
+                  Please enter a name
                 </p>
               )}
             </div>
@@ -272,8 +278,8 @@ function Signup() {
                 onKeyDown={handleKeyDown}
                 name="email"
                 className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${!validateEmail(params.email.value) && emailTouched
-                    ? "border-red-500"
-                    : "border-gray-300"
+                  ? "border-red-500"
+                  : "border-gray-300"
                   }`}
               />
               {!validateEmail(params.email.value) && emailTouched && (
@@ -301,8 +307,8 @@ function Signup() {
                 onKeyDown={handleKeyDown}
                 name="phone"
                 className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${!validatePhoneNumber(params.phone.value) && phoneTouched
-                    ? "border-red-500"
-                    : "border-gray-300"
+                  ? "border-red-500"
+                  : "border-gray-300"
                   }`}
               />
               {!validatePhoneNumber(params.phone.value) && phoneTouched && (
@@ -343,8 +349,8 @@ function Signup() {
                 onKeyDown={handleKeyDown}
                 name="aadhar"
                 className={`w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring ${!validateAadharNumber(params.aadhar.value) && aadharTouched
-                    ? "border-red-500"
-                    : "border-gray-300"
+                  ? "border-red-500"
+                  : "border-gray-300"
                   }`}
               />
               {!validateAadharNumber(params.aadhar.value) && aadharTouched && (
@@ -380,8 +386,8 @@ function Signup() {
                   name="password"
                   type={showPassword ? "text" : "password"} // Show plain text if showPassword is true
                   className={`flex-grow outline-none appearance-none bg-transparent ${params.password.value.length < 8 && passwordTouched
-                      ? "border-red-500"
-                      : "border-transparent"
+                    ? "border-red-500"
+                    : "border-transparent"
                     }`}
                 />
                 {/* Show/hide password toggle button */}
@@ -425,9 +431,9 @@ function Signup() {
                   onChange={(e) => handleInputChange("password2", e.target.value)}
                   type={showPassword ? "text" : "password"} // Show plain text if showPassword is true
                   className={`flex-grow outline-none appearance-none bg-transparent ${params.password2.value !== params.password.value &&
-                      passwordTouched && password2Touched
-                      ? "border-red-500"
-                      : "border-transparent"
+                    passwordTouched && password2Touched
+                    ? "border-red-500"
+                    : "border-transparent"
                     }`}
                 />
                 {/* Show/hide password toggle button */}
