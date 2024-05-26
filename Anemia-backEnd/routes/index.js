@@ -170,6 +170,29 @@ router.get("/test_result", async (req, res) => {
   }
 });
 
+router.post("/update_response", async (req, res) => {
+  const { patientId, testResultId, response } = req.body;
+
+  try {
+    const patient = await Patient.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const testResult = patient.testResults.id(testResultId);
+    if (!testResult) {
+      return res.status(404).json({ message: "Test result not found" });
+    }
+
+    testResult.response = response;
+    await patient.save();
+
+    res.json({ message: "Response updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
 router.get("/successReset", (req, res) => res.send("successReset"));
 
 

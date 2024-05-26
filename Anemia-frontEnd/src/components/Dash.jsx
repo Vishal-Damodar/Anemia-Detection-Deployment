@@ -4,6 +4,7 @@ import axios from "axios";
 function Dash() {
   const [active, setActive] = useState("patient");
   const [data, setData] = useState([]);
+  const [responses, setResponses] = useState({});
 
   useEffect(() => {
     axios
@@ -34,6 +35,44 @@ function Dash() {
       }
     }
     return highestConfidenceResult;
+  };
+
+  const handleResponseChange = (testResultId, value) => {
+    setResponses({
+      ...responses,
+      [testResultId]: value,
+    });
+  };
+
+  const handleSubmit = (patientId, testResultId) => {
+    const response = responses[testResultId];
+    if (response) {
+      axios
+        .post(`http://localhost:3006/update_response`, {
+          patientId,
+          testResultId,
+          response,
+        })
+        .then((res) => {
+          console.log("Response submitted:", res.data);
+          // Optionally update the local state with the new response
+          setData((prevData) =>
+            prevData.map((patient) =>
+              patient._id === patientId
+                ? {
+                    ...patient,
+                    testResults: patient.testResults.map((result) =>
+                      result._id === testResultId
+                        ? { ...result, response }
+                        : result
+                    ),
+                  }
+                : patient
+            )
+          );
+        })
+        .catch((err) => console.log("ERROR:::::::", err));
+    }
   };
 
   return (
@@ -78,11 +117,11 @@ function Dash() {
                     </span>
                   </div>
                   <div className="md:flex-grow">
-                    {item.testResults.map((result) => {
+                    {item.testResults.map((result, index) => {
                       const highestConfidenceResult = getHighestConfidenceResult(result.result);
                       if (highestConfidenceResult) {
                         return (
-                          <div key={result._id} className="mb-8 flex">
+                          <div key={result._id || index} className="mb-8 flex">
                             <div className="w-1/2 max-w-md">
                               <h2 className="text-2xl font-medium text-gray-900 title-font mb-2">
                                 {result.testType}
@@ -113,7 +152,15 @@ function Dash() {
                               <textarea
                                 className="w-full h-24 border-2 border-gray-300 p-2"
                                 placeholder="Type here..."
+                                value={responses[result._id] || result.response || ''}
+                                onChange={(e) => handleResponseChange(result._id, e.target.value)}
                               ></textarea>
+                              <button
+                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+                                onClick={() => handleSubmit(item._id, result._id)}
+                              >
+                                Submit
+                              </button>
                             </div>
                           </div>
                         );

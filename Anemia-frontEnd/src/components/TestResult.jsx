@@ -23,7 +23,7 @@ const TestResult = () => {
     const aadhar = value.aadhar;
     console.log("gloable", value);
     axios
-      .get(`http://a7db4c829af3f4f7985d8f62705bf031-1032979001.ap-south-1.elb.amazonaws.com:3006/user_result?aadhar=${aadhar}`)
+      .get(`http://localhost:3006/user_result?aadhar=${aadhar}`)
       .then((res) => {
         //console.log(res.data.user_result);
         setdata(res.data.user_result.patient); // Double check the structure here
